@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { auth, tasks as taskApi } from './api';
+import { auth, tasks as taskApi } from "./services/api";
 
 const emptyForm = { title: '', discipline: '', deadline: '', priority: 'MEDIA', parentId: '' };
 const priorityStyle = {
@@ -76,7 +76,15 @@ function TaskForm({ form, setForm, onSubmit, editing, onCancel }) {
 }
 
 function App() {
-  const [session, setSession] = useState(() => JSON.parse(localStorage.getItem('foco-session') || 'null'));
+  const [session, setSession] = useState(() => {
+    try {
+      const savedSession = JSON.parse(localStorage.getItem('foco-session') || 'null');
+      return savedSession?.user?.name && savedSession?.token ? savedSession : null;
+    } catch {
+      localStorage.removeItem('foco-session');
+      return null;
+    }
+  });
   const [taskList, setTaskList] = useState([]);
   const [form, setForm] = useState(emptyForm);
   const [editing, setEditing] = useState(null);
@@ -93,7 +101,11 @@ function App() {
   const visibleTasks = useMemo(() => taskList.filter((task) => filter === 'todas' || (filter === 'pendentes' ? !task.completed : task.completed)), [taskList, filter]);
   const pendingCount = taskList.filter((task) => !task.completed).length;
 
-  if (!session) return <AuthScreen onAuthenticated={(value) => { localStorage.setItem('foco-session', JSON.stringify(value)); setSession(value); }} />;
+  if (!session) return <AuthScreen onAuthenticated={(value) => {
+    localStorage.setItem('foco-session', JSON.stringify(value));
+    localStorage.setItem('@Organizador:token', value.token);
+    setSession(value);
+  }} />;
 
   async function saveTask(event) {
     event.preventDefault();
@@ -133,7 +145,7 @@ function App() {
       <header className="border-b border-slate-200 bg-white">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
           <div><p className="text-sm font-bold tracking-[0.2em] text-indigo-600">FOCO</p><p className="text-sm text-slate-500">Organizador de estudos</p></div>
-          <div className="flex items-center gap-4"><span className="hidden text-sm font-semibold text-slate-600 sm:block">{session.user.name}</span><button className="text-sm font-bold text-slate-400 hover:text-rose-600" onClick={() => { localStorage.removeItem('foco-session'); setSession(null); }}>Sair</button></div>
+          <div className="flex items-center gap-4"><span className="hidden text-sm font-semibold text-slate-600 sm:block">{session.user.name}</span><button className="text-sm font-bold text-slate-400 hover:text-rose-600" onClick={() => { localStorage.removeItem('foco-session'); localStorage.removeItem('@Organizador:token'); setSession(null); }}>Sair</button></div>
         </div>
       </header>
       <main className="mx-auto max-w-6xl px-6 py-10">
