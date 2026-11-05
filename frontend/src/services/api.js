@@ -4,6 +4,14 @@ const api = axios.create({
   baseURL: 'http://localhost:3000',
 });
 
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const message = error.response?.data?.error || 'Não foi possível completar a operação.';
+    return Promise.reject(new Error(message));
+  },
+);
+
 // Envia o token JWT automaticamente em todas as requisições
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('@Organizador:token');

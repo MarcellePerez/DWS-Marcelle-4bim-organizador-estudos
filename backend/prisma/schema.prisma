@@ -16,19 +16,21 @@ model User {
 }
 
 model Task {
-  id          String   @id @default(uuid())
+  id          String    @id @default(uuid())
   title       String
   discipline  String
   deadline    DateTime
-  priority    String   // BAIXA, MEDIA, ALTA
-  completed   Boolean  @default(false)
-  userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  // Auto-relacionamento para a regra de negócio (Subtarefas / Pendências)
-  parentId    String?
-  parentTask  Task?    @relation("TaskDependencies", fields: [parentId], references: [id], onDelete: Cascade)
-  subTasks    Task[]   @relation("TaskDependencies")
+  priority    String
+  completed   Boolean   @default(false)
+  deletedAt   DateTime? // null = ativa, Data = na Lixeira
 
-  createdAt   DateTime @default(now())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+
+  parentId    String?
+  parent      Task?     @relation("SubTasks", fields: [parentId], references: [id], onDelete: Cascade)
+  subTasks    Task[]    @relation("SubTasks")
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }

@@ -25,8 +25,24 @@ export const auth = {
 };
 
 export const tasks = {
-  list: (token) => request('/tasks', { token }),
-  create: (token, body) => request('/tasks', { method: 'POST', token, body: JSON.stringify(body) }),
-  update: (token, id, body) => request(`/tasks/${id}`, { method: 'PUT', token, body: JSON.stringify(body) }),
-  remove: (token, id) => request(`/tasks/${id}`, { method: 'DELETE', token }),
+  list: async () => {
+    const response = await api.get('/tasks');
+    return response.data;
+  },
+  create: async (taskData) => {
+    const response = await api.post('/tasks', taskData);
+    return response.data;
+  },
+  update: async (id, taskData) => {
+    const response = await api.put(`/tasks/${id}`, taskData);
+    return response.data;
+  },
+  delete: async (id, permanent = false) => {
+    const response = await api.delete(`/tasks/${id}${permanent ? '?permanent=true' : ''}`);
+    return response.data;
+  },
+  remove: async (id, permanent = false) => {
+    const response = await api.delete(`/tasks/${id}${permanent ? '?permanent=true' : ''}`);
+    return response.data;
+  }
 };
