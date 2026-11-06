@@ -332,7 +332,7 @@ function App() {
                         {!task.deletedAt && (
                           <button 
                             aria-label={task.completed ? 'Reabrir tarefa' : 'Concluir tarefa'} 
-                            className={`mt-1 h-5 w-5 shrink-0 rounded-full border-2 ${task.completed ? 'border-emerald-500 bg-emerald-500' : 'border-slate-300'}`} 
+                            className={`mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 ${task.completed ? 'border-emerald-500 bg-emerald-500' : 'border-slate-300'}`} 
                             onClick={() => toggleTask(task)}
                           >
                             {task.completed && <span className="text-xs text-white">✓</span>}

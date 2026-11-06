@@ -21,9 +21,11 @@ exports.register = async (req, res) => {
       data: { name, email, password: hashedPassword }
     });
 
-    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET || 'segredo_padrao', {
-      expiresIn: '7d'
-    });
+    const token = jwt.sign(
+  { id: user.id }, 
+  process.env.JWT_SECRET || 'segredo_padrao', 
+  { expiresIn: '7d' }
+);
 
     return res.status(201).json({
       user: { id: user.id, name: user.name, email: user.email },
