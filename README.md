@@ -72,7 +72,7 @@ As rotas JWT recebem `Authorization: Bearer <token>`. O `PUT` também permite re
 
 ## Publicação AV2
 
-O repositório inclui `render.yaml` para criar o backend no Render. Crie também um banco Render Postgres e configure `DATABASE_URL` com a URL interna fornecida pelo Render. Configure `FRONTEND_URL` com a origem do frontend publicado; o Render gera `JWT_SECRET`. Aplique a migration inicial com `npm run prisma:deploy` a partir do backend apontando para esse PostgreSQL.
+O repositório inclui `render.yaml` para criar o backend no Render. Crie também um banco Render Postgres e configure `DATABASE_URL` com a URL interna se o serviço e o banco estiverem na mesma região; se estiverem em regiões diferentes, use a URL externa. O comando de build do Render executa `npm run prisma:deploy` para aplicar as migrations ao PostgreSQL configurado. Configure `FRONTEND_URL` com a origem do frontend publicado; o Render gera `JWT_SECRET`.
 
 Confira os limites do plano antes de criar o banco: a documentação do Render informa que bancos Postgres gratuitos expiram após 30 dias. Não use esse plano para guardar dados que precisem continuar disponíveis depois desse prazo sem fazer backup ou escolher um plano adequado. [Detalhes dos planos gratuitos do Render](https://render.com/docs/free).
 
