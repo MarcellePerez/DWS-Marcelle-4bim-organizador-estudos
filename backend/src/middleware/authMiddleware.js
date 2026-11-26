@@ -7,13 +7,19 @@ module.exports = (req, res, next) => {
     return res.status(401).json({ error: 'Token de autenticação não fornecido.' });
   }
 
-  const [, token] = authHeader.split(' ');
+  const [scheme, token] = authHeader.split(' ');
+  if (scheme?.toLowerCase() !== 'bearer' || !token) {
+    return res.status(401).json({ error: 'Cabeçalho de autenticação inválido.' });
+  }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'segredo_padrao');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    if (typeof decoded === 'string' || typeof decoded.id !== 'string') {
+      return res.status(401).json({ error: 'Token inválido ou expirado.' });
+    }
     req.userId = decoded.id;
     return next();
-  } catch (err) {
+  } catch {
     return res.status(401).json({ error: 'Token inválido ou expirado.' });
   }
 };

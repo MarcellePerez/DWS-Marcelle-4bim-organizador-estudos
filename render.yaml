@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: foco-api
+    runtime: node
+    rootDir: backend
+    buildCommand: npm ci && npm run prisma:generate
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: FRONTEND_URL
+        sync: false

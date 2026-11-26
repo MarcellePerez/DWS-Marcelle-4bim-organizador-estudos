@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const prisma = require('../config/prisma');
+const prisma = require('../config/database');
 const HttpError = require('../utils/http-error');
 
 function createToken(user) {
@@ -9,8 +9,21 @@ function createToken(user) {
   });
 }
 
-async function register({ name, email, password }) {
-  if (!name?.trim() || !email?.trim() || !password || password.length < 6) {
+function isValidEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+async function register({ name, email, password } = {}) {
+  if (
+    typeof name !== 'string'
+    || !name.trim()
+    || name.trim().length > 191
+    || typeof email !== 'string'
+    || !isValidEmail(email.trim())
+    || email.trim().length > 191
+    || typeof password !== 'string'
+    || password.length < 6
+  ) {
     throw new HttpError(400, 'Nome, e-mail e senha com pelo menos 6 caracteres são obrigatórios.');
   }
 
@@ -32,9 +45,18 @@ async function register({ name, email, password }) {
   return { user, token: createToken(user) };
 }
 
-async function login({ email, password }) {
+async function login({ email, password } = {}) {
+  if (
+    typeof email !== 'string'
+    || !isValidEmail(email.trim())
+    || typeof password !== 'string'
+    || !password
+  ) {
+    throw new HttpError(400, 'Informe um e-mail válido e a senha.');
+  }
+
   const user = await prisma.user.findUnique({ where: { email: email?.trim().toLowerCase() } });
-  const validPassword = user && await bcrypt.compare(password || '', user.password);
+  const validPassword = user && await bcrypt.compare(password, user.password);
   if (!validPassword) {
     throw new HttpError(401, 'E-mail ou senha inválidos.');
   }

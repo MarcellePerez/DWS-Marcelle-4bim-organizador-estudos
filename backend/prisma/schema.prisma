@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
 }
 
 model User {
@@ -25,7 +25,7 @@ model Task {
   deletedAt   DateTime? // null = ativa, Data = na Lixeira
 
   userId      String
-  user        User      @relation(fields: [userId], references: [id])
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   parentId    String?
   parent      Task?     @relation("SubTasks", fields: [parentId], references: [id], onDelete: Cascade)
