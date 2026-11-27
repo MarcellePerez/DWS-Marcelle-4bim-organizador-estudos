@@ -72,10 +72,14 @@ As rotas JWT recebem `Authorization: Bearer <token>`. O `PUT` também permite re
 
 ## Publicação AV2
 
-O repositório inclui `render.yaml` para criar o backend no Render. Crie também um banco Render Postgres e configure `DATABASE_URL` com a URL interna se o serviço e o banco estiverem na mesma região; se estiverem em regiões diferentes, use a URL externa. O comando de build do Render executa `npm run prisma:deploy` para aplicar as migrations ao PostgreSQL configurado. Configure `FRONTEND_URL` com a origem do frontend publicado; o Render gera `JWT_SECRET`.
+O repositório inclui `render.yaml` para criar o backend no Render. Crie também um banco Render Postgres e configure `DATABASE_URL` com a URL interna se o serviço e o banco estiverem na mesma região; se estiverem em regiões diferentes, use a URL externa com `sslmode=require`. O comando de build do Render executa `npm run prisma:deploy` para aplicar as migrations ao PostgreSQL configurado. Configure `FRONTEND_URL` com a origem do frontend publicado; o Render gera `JWT_SECRET`.
 
 Confira os limites do plano antes de criar o banco: a documentação do Render informa que bancos Postgres gratuitos expiram após 30 dias. Não use esse plano para guardar dados que precisem continuar disponíveis depois desse prazo sem fazer backup ou escolher um plano adequado. [Detalhes dos planos gratuitos do Render](https://render.com/docs/free).
 
 Publique `frontend` na Vercel, definindo `frontend` como diretório raiz e `VITE_API_URL` como a URL pública do backend. O arquivo `frontend/vercel.json` habilita o fallback de rotas do React. Atualize `FRONTEND_URL` no Render após descobrir a origem pública do frontend.
 
-**URL pública da aplicação:** preencher após a publicação.
+**Site:** https://dws-marcelle-4bim-organizador-estudos-2i2sc44rl.vercel.app
+
+**API:** https://foco-api-iv9r.onrender.com
+
+**Verificação da API:** https://foco-api-iv9r.onrender.com/health
